@@ -1,3 +1,4 @@
+import random
 import soundsensor
 import motor
 import time
@@ -10,38 +11,47 @@ def drive(sensor, move):
     def obstacle():
         return sensor.distance < sensor.trigger_distance
 
-    def change_direction(direction):
-        if direction == "right":
+    def turn(direction):
+        if direction == "LEFT":
             return move.left()
         return move.right()
 
     while True:
-        turn = move.left()
+        direction = random.choice(["LEFT", "RIGHT"])
+        last_detection = time.time()
         attempts = 0
         sensor.start()
         if not obstacle():
             move.forward()
-        else: #Scan for obstacles
+        else: # Scan for obstacles
+
+            if last_detection:
+                if (time.time() - last_detection) < 1:
+                    if direction == "LEFT":
+                        direction = "RIGHT"
+                    else:
+                        direction = "LEFT"
+
             while obstacle():
                 sensor.start()
-                turn()
+                turn(direction)
                 time.sleep(0.1)
                 move.neutral()
-                time.sleep(0.1)
+                time.sleep(0.05)
                 attempts += 1
                 sensor.start()
                 if obstacle() and attempts > 2:
                     move.right()
-                    time.sleep(0.4)
+                    time.sleep(0.2)
                     sensor.start()
                     if obstacle():
-                        turn = change_direction("right")
+                        direction = "RIGHT"
                         attempts = 0
 
 
 if __name__ == '__main__':
 
-    ### Pin setup
+    # ## Pin setup
     # Motor
     left1 = 31
     left2 = 33
@@ -55,7 +65,6 @@ if __name__ == '__main__':
     led_g = 11
     trig_d = 40 # Trigger distance
 
-
     try:
         m = motor.Motor(left1, left2, right1, right2)
         s = soundsensor.Sensor(trig_d, trig, echo, led_g, led_r)
@@ -64,7 +73,6 @@ if __name__ == '__main__':
         s.set_HUD = False
         drive(s, m)
 
-#    except KeyboardInterrupt:
     except KeyboardInterrupt:
         m.neutral()
         GPIO.cleanup()
