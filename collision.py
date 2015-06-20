@@ -5,22 +5,38 @@ import RPi.GPIO as GPIO
 
 
 def drive(sensor, move):
-    """ Argument is sensor and motor control objects"""
+    """ Arguments are sensor and motor control objects"""
 
     def obstacle():
         return sensor.distance < sensor.trigger_distance
 
+    def change_direction(direction):
+        if direction == "right":
+            return move.left()
+        return move.right()
+
     while True:
+        turn = move.left()
+        attempts = 0
         sensor.start()
-        start = time.time()
         if not obstacle():
             move.forward()
         else: #Scan for obstacles
             while obstacle():
                 sensor.start()
-                move.left()
-            move.left()
-            time.sleep(0.1)
+                turn()
+                time.sleep(0.1)
+                move.neutral()
+                time.sleep(0.1)
+                attempts += 1
+                sensor.start()
+                if obstacle() and attempts > 2:
+                    move.right()
+                    time.sleep(0.4)
+                    sensor.start()
+                    if obstacle():
+                        turn = change_direction("right")
+                        attempts = 0
 
 
 if __name__ == '__main__':
