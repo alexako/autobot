@@ -12,28 +12,27 @@ def PS2Controller():
     RightTrack = 0
     LeftTrack = 0
 
-    threshold = 0.60
+    threshold = 0.40
 
     while True:
         UpdateMotors = 0
         events = pygame.event.get()
         for event in events:
             if event.type == 7:
-                if event.value > -1.0 or event.value < -1.5:
-                    if event.axis == 1:
-                        LeftTrack = event.value
-                        UpdateMotors = 1
-                    elif event.axis == 3:
-                        RightTrack = event.value
-                        UpdateMotors = 1
+                if event.axis == 1:
+                    RightTrack = event.value
+                    UpdateMotors = 1
+                elif event.axis == 3:
+                    LeftTrack = event.value
+                    UpdateMotors = 1
 
         # Check if we need to update what the motors are doing
         if UpdateMotors:
             GPIO.output(led_r, 0)
             GPIO.output(led_g, 1)
 
-            # Check how to configure the left motor
 
+            # Right Motor
             # Move forwards
             if (RightTrack < -threshold):
                 GPIO.output(right1, 1)
@@ -49,7 +48,7 @@ def PS2Controller():
                 GPIO.output(led_g, 0)
                 GPIO.output(led_r, 1)
 
-            # And do the same for the right motor
+            # Left Motor
             if (LeftTrack < -threshold):
                 GPIO.output(left1, 1)
                 GPIO.output(left2, 0)
