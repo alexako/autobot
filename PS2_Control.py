@@ -18,6 +18,17 @@ def PS2Controller():
         UpdateMotors = 0
         events = pygame.event.get()
         for event in events:
+
+            # If button is pressed
+            if event.type == 10:
+                if event.button == 0:
+                    accelerate = True
+
+            # If button is released
+            elif event.type == 11:
+                if event.button == 0:
+                    accelerate = False
+
             if event.type == 7:
                 if event.axis == 1:
                     RightTrack = event.value
@@ -64,6 +75,13 @@ def PS2Controller():
                 GPIO.output(led_r, 1)
 
 
+            if (accelerate):
+                GPIO.output(left1, 1)
+                GPIO.output(left2, 0)
+                GPIO.output(right1, 1)
+                GPIO.output(right2, 1)
+                GPIO.output(led_g, 1)
+                GPIO.output(led_r, 0)
 
 if __name__ == '__main__':
 
