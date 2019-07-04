@@ -48,6 +48,18 @@ def turn_right():
     toggle_red()
     return "Turned right"
 
+@app.route("/activate", methods=["GET"])
+def turn_right():
+    """ Turn bot right """
+    toggle_green()
+    return "Turned right"
+
+@app.route("/deactivate", methods=["GET"])
+def turn_right():
+    """ Turn bot right """
+    toggle_red()
+    return "Turned right"
+
 
 if __name__ == '__main__':
 
