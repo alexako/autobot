@@ -5,48 +5,60 @@ import time
 import RPi.GPIO as GPIO
 
 
-def drive(sensor, move):
+class Collision():
     """ Arguments are sensor and motor control objects"""
 
-    def obstacle():
-        return sensor.distance < sensor.trigger_distance
+    def __init__(self, sensor, move):
+        self.activate = True
+        self.sensor = sensor
+        self.move = move
 
-    def turn(direction):
+    def obstacle(self):
+        return self.sensor.distance < self.sensor.trigger_distance
+
+    def turn(self, direction):
         if direction == "LEFT":
-            return move.left()
-        return move.right()
+            return self.move.left()
+        return self.move.right()
 
-    while True:
-        direction = random.choice(["LEFT", "RIGHT"])
-        last_detection = time.time()
-        attempts = 0
-        sensor.start()
-        if not obstacle():
-            move.forward()
-        else: # Scan for obstacles
+    def drive(self):
+        while self.activate:
+            direction = random.choice(["LEFT", "RIGHT"])
+            last_detection = time.time()
+            attempts = 0
+            self.sensor.start()
+            if not self.obstacle():
+                self.move.forward()
+            else: # Scan for obstacles
 
-            if last_detection:
-                if (time.time() - last_detection) < 1:
-                    if direction == "LEFT":
-                        direction = "RIGHT"
-                    else:
-                        direction = "LEFT"
+                if last_detection:
+                    if (time.time() - last_detection) < 1:
+                        if direction == "LEFT":
+                            direction = "RIGHT"
+                        else:
+                            direction = "LEFT"
 
-            while obstacle():
-                sensor.start()
-                turn(direction)
-                time.sleep(0.1)
-                move.neutral()
-                time.sleep(0.05)
-                attempts += 1
-                sensor.start()
-                if obstacle() and attempts > 2:
-                    move.right()
-                    time.sleep(0.2)
-                    sensor.start()
-                    if obstacle():
-                        direction = "RIGHT"
-                        attempts = 0
+                while self.obstacle():
+                    self.sensor.start()
+                    self.turn(direction)
+                    time.sleep(0.1)
+                    self.move.neutral()
+                    time.sleep(0.05)
+                    attempts += 1
+                    self.sensor.start()
+                    if self.obstacle() and attempts > 2:
+                        self.move.right()
+                        time.sleep(0.2)
+                        self.sensor.start()
+                        if self.obstacle():
+                            direction = "RIGHT"
+                            attempts = 0
+
+    def start(self):
+        self.activate = True
+
+    def stop(self):
+        self.activate = False
 
 
 if __name__ == '__main__':
@@ -71,7 +83,10 @@ if __name__ == '__main__':
         m.setup_GPIO()
         s.setup_GPIO()
         s.set_HUD = False
-        drive(s, m)
+
+        c = Collision(s, m)
+        c.start()
+        c.drive()
 
     except KeyboardInterrupt:
         m.neutral()
