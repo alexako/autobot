@@ -34,6 +34,7 @@ def home():
 @app.route("/forward", methods=["GET"])
 def forward():
     """ Move bot forward """
+    toggle_green()
     return "Moved forward"
 
 @app.route("/left", methods=["GET"])
@@ -47,6 +48,12 @@ def turn_right():
     """ Turn bot right """
     toggle_red()
     return "Turned right"
+
+@app.route("/right", methods=["GET"])
+def reverse():
+    """ Reverse bot """
+    toggle_red()
+    return "Reversed bot"
 
 
 if __name__ == '__main__':
