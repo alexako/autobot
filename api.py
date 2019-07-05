@@ -1,6 +1,8 @@
 from time import sleep
 import flask
 import RPi.GPIO as GPIO
+import soundsensor
+from collision import Collision
 from motor import Motor
 
 
@@ -76,11 +78,14 @@ def turn_right():
 def activate():
     """ Activate autobot """
     toggle_green()
+    collision.start()
+    collision.drive()
     return "Autobot on"
 
 @app.route("/deactivate", methods=["GET"])
 def deactivate():
     """ Deactivate auto """
+    collision.stop()
     toggle_red()
     return "Autobot off"
 
@@ -96,8 +101,20 @@ if __name__ == '__main__':
     RIGHT1 = 35
     RIGHT2 = 37
 
+    # Sound Sensor
+    TRIG = 16
+    ECHO = 18
+
+    # Trigger distance
+    TRIG_D = 40
+
     motor = Motor(LEFT1, LEFT2, RIGHT1, RIGHT2)
-    setup_gpio()
+    sensor = soundsensor.Sensor(TRIG_D, TRIG, ECHO, LED_G, LED_R)
+    motor.setup_GPIO()
+    sensor.setup_GPIO()
+    sensor.set_HUD = False
+
+    collision = Collision(sensor, motor)
 
     try:
         toggle_green()
