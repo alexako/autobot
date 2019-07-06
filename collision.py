@@ -21,8 +21,15 @@ class Collision():
             return self.move.left()
         return self.move.right()
 
-    def drive(self):
-        while self.activate:
+    def check_limit(self, start_time, time_limit):
+        if time_limit != 0:
+            return time.time() - start_time <= time_limit
+        return True
+
+    def drive(self, time_limit=0):
+        start_time = time.time()
+        while self.check_limit(start_time, time_limit):
+
             direction = random.choice(["LEFT", "RIGHT"])
             last_detection = time.time()
             attempts = 0

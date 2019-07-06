@@ -1,4 +1,5 @@
 from time import sleep
+import threading
 import flask
 import RPi.GPIO as GPIO
 import soundsensor
@@ -20,6 +21,14 @@ def setup_gpio():
     GPIO.setup(RIGHT1, GPIO.OUT)
     GPIO.setup(RIGHT2, GPIO.OUT)
 
+def start_drive():
+    collision.start()
+    collision.drive(30)
+    motor.neutral()
+    toggle_green()
+    toggle_red()
+    toggle_green()
+    toggle_red()
 
 def toggle_green():
     """ Toggle green LED """
@@ -77,15 +86,15 @@ def turn_right():
 @app.route("/activate", methods=["GET"])
 def activate():
     """ Activate autobot """
-    toggle_green()
-    collision.start()
-    collision.drive()
+    thread = threading.Thread(target=start_drive)
+    thread.start()
     return "Autobot on"
 
 @app.route("/deactivate", methods=["GET"])
 def deactivate():
     """ Deactivate auto """
     collision.stop()
+    motor.neutral()
     toggle_red()
     return "Autobot off"
 
@@ -119,6 +128,10 @@ if __name__ == '__main__':
     try:
         toggle_green()
         toggle_red()
+        toggle_green()
+        toggle_red()
         app.run(host='0.0.0.0', port=3000)
+        toggle_green()
     except KeyboardInterrupt:
+        motor.neutral()
         GPIO.cleanup()
