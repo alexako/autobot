@@ -2,6 +2,7 @@ from time import sleep
 import threading
 import flask
 import RPi.GPIO as GPIO
+import pusher_client
 import soundsensor
 from collision import Collision
 from motor import Motor
@@ -25,6 +26,7 @@ def start_drive():
     collision.start()
     collision.drive(30)
     motor.neutral()
+    pusher_client.trigger("drive-complete", "Autobot available")
     toggle_green()
     toggle_red()
     toggle_green()
@@ -88,6 +90,7 @@ def activate():
     """ Activate autobot """
     thread = threading.Thread(target=start_drive)
     thread.start()
+    pusher_client.trigger("drive-start", "Autobot busy")
     return "Autobot on"
 
 @app.route("/deactivate", methods=["GET"])
