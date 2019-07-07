@@ -52,6 +52,7 @@ def home():
 @app.route("/forward", methods=["GET"])
 def forward():
     """ Move bot forward """
+    if thread.isAlive(): return "Autobot busy"
     toggle_green()
     motor.forward()
     sleep(0.25)
@@ -61,6 +62,7 @@ def forward():
 @app.route("/reverse", methods=["GET"])
 def reverse():
     """ Move bot backward """
+    if thread.isAlive(): return "Autobot busy"
     toggle_red()
     motor.reverse()
     sleep(0.25)
@@ -70,6 +72,7 @@ def reverse():
 @app.route("/left", methods=["GET"])
 def turn_left():
     """ Turn bot left """
+    if thread.isAlive(): return "Autobot busy"
     toggle_green()
     motor.left()
     sleep(0.25)
@@ -79,6 +82,7 @@ def turn_left():
 @app.route("/right", methods=["GET"])
 def turn_right():
     """ Turn bot right """
+    if thread.isAlive(): return "Autobot busy"
     toggle_red()
     motor.right()
     sleep(0.25)
@@ -88,7 +92,7 @@ def turn_right():
 @app.route("/activate", methods=["GET"])
 def activate():
     """ Activate autobot """
-    thread = threading.Thread(target=start_drive)
+    if thread.isAlive(): return "Autobot busy"
     thread.start()
     pusher_client.trigger("drive-start", "Autobot busy")
     return "Autobot on"
@@ -128,6 +132,8 @@ if __name__ == '__main__':
 
     collision = Collision(sensor, motor)
 
+    thread = threading.Thread(target=start_drive)
+
     try:
         toggle_green()
         toggle_red()
@@ -135,6 +141,7 @@ if __name__ == '__main__':
         toggle_red()
         app.run(host='0.0.0.0', port=3000)
         toggle_green()
+        pusher_client.trigger("api-status", "Online")
     except KeyboardInterrupt:
         motor.neutral()
         GPIO.cleanup()
