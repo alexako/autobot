@@ -8,10 +8,6 @@ from collision import Collision
 from motor import Motor
 
 
-app = flask.Flask(__name__)
-app.config["DEBUG"] = True
-
-
 def setup_gpio():
     """ Setup GPIO Pins """
     GPIO.setmode(GPIO.BOARD)
@@ -22,28 +18,45 @@ def setup_gpio():
     GPIO.setup(RIGHT1, GPIO.OUT)
     GPIO.setup(RIGHT2, GPIO.OUT)
 
-def start_drive():
-    collision.start()
-    collision.drive(30)
+def start_drive(direction):
+    directions = {
+        "FORWARD": motor.forward(),
+        "REVERSE": motor.reverse(),
+        "LEFT": motor.left(),
+        "RIGHT": motor.right()
+    }
+    if direction in directions:
+        toggle_green()
+        directions[direction]
+        sleep(0.25)
+    else:
+        collision.start()
+        collision.drive(30)
+        toggle_green()
+        toggle_red()
+
     motor.neutral()
     pusher_client.trigger("drive-complete", "Autobot available")
-    toggle_green()
-    toggle_red()
-    toggle_green()
-    toggle_red()
 
 def toggle_green():
     """ Toggle green LED """
     GPIO.output(LED_G, True)
-    sleep(0.5)
+    sleep(0.25)
     GPIO.output(LED_G, False)
 
 def toggle_red():
     """ Toggle red LED """
     GPIO.output(LED_R, True)
-    sleep(0.5)
+    sleep(0.25)
     GPIO.output(LED_R, False)
 
+# Globals
+thread = threading.Thread(target=start_drive)
+app = flask.Flask(__name__)
+app.config["DEBUG"] = True
+
+
+# Routes
 @app.route("/", methods=["GET"])
 def home():
     """ Render docs page """
@@ -52,49 +65,46 @@ def home():
 @app.route("/forward", methods=["GET"])
 def forward():
     """ Move bot forward """
+    global thread
     if thread.isAlive(): return "Autobot busy"
-    toggle_green()
-    motor.forward()
-    sleep(0.25)
-    motor.neutral()
+    thread = threading.Thread(target=start_drive, args=["FORWARD"])
+    thread.start()
     return "Moved forward"
 
 @app.route("/reverse", methods=["GET"])
 def reverse():
     """ Move bot backward """
+    global thread
     if thread.isAlive(): return "Autobot busy"
-    toggle_red()
-    motor.reverse()
-    sleep(0.25)
-    motor.neutral()
+    thread = threading.Thread(target=start_drive, args=["REVERSE"])
+    thread.start()
     return "Moved backward"
 
 @app.route("/left", methods=["GET"])
 def turn_left():
     """ Turn bot left """
+    global thread
     if thread.isAlive(): return "Autobot busy"
-    toggle_green()
-    motor.left()
-    sleep(0.25)
-    motor.neutral()
+    thread = threading.Thread(target=start_drive, args=["LEFT"])
+    thread.start()
     return "Turned left"
 
 @app.route("/right", methods=["GET"])
 def turn_right():
     """ Turn bot right """
+    global thread
     if thread.isAlive(): return "Autobot busy"
-    toggle_red()
-    motor.right()
-    sleep(0.25)
-    motor.neutral()
+    thread = threading.Thread(target=start_drive, args=["RIGHT"])
+    thread.start()
     return "Turned right"
 
 @app.route("/activate", methods=["GET"])
 def activate():
     """ Activate autobot """
+    global thread
     if thread.isAlive(): return "Autobot busy"
+    thread = threading.Thread(target=start_drive, args=["AUTO"])
     thread.start()
-    pusher_client.trigger("drive-start", "Autobot busy")
     return "Autobot on"
 
 @app.route("/deactivate", methods=["GET"])
@@ -131,8 +141,6 @@ if __name__ == '__main__':
     sensor.set_HUD = False
 
     collision = Collision(sensor, motor)
-
-    thread = threading.Thread(target=start_drive)
 
     try:
         toggle_green()
