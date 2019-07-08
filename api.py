@@ -41,13 +41,13 @@ def start_drive(direction):
 def toggle_green():
     """ Toggle green LED """
     GPIO.output(LED_G, True)
-    sleep(0.25)
+    sleep(0.4)
     GPIO.output(LED_G, False)
 
 def toggle_red():
     """ Toggle red LED """
     GPIO.output(LED_R, True)
-    sleep(0.25)
+    sleep(0.4)
     GPIO.output(LED_R, False)
 
 # Globals
@@ -147,7 +147,12 @@ if __name__ == '__main__':
         toggle_red()
         toggle_green()
         toggle_red()
+        toggle_green()
+        toggle_red()
         app.run(host='0.0.0.0', port=3000)
+
+        toggle_green()
+        sleep(0.5)
         toggle_green()
         pusher_client.trigger("api-status", "Online")
     except KeyboardInterrupt:
