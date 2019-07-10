@@ -20,14 +20,13 @@ def setup_gpio():
 
 def start_drive(direction):
     directions = {
-        "FORWARD": motor.forward(),
-        "REVERSE": motor.reverse(),
-        "LEFT": motor.left(),
-        "RIGHT": motor.right()
+        "FORWARD": motor.forward,
+        "REVERSE": motor.reverse,
+        "LEFT": motor.left,
+        "RIGHT": motor.right
     }
     if direction in directions:
-        toggle_green()
-        directions[direction]
+        directions[direction]()
         sleep(0.25)
     else:
         collision.start()
@@ -60,7 +59,8 @@ app.config["DEBUG"] = True
 @app.route("/", methods=["GET"])
 def home():
     """ Render docs page """
-    return "Autobot API"
+    #return "Autobot API<br/> <iframe src='http://172.20.10.8:8081'></iframe>"
+    return flask.redirect("http://172.20.10.8:8081", code=302)
 
 @app.route("/forward", methods=["GET"])
 def forward():
@@ -69,6 +69,7 @@ def forward():
     if thread.isAlive(): return "Autobot busy"
     thread = threading.Thread(target=start_drive, args=["FORWARD"])
     thread.start()
+    toggle_green()
     return "Moved forward"
 
 @app.route("/reverse", methods=["GET"])
@@ -78,6 +79,7 @@ def reverse():
     if thread.isAlive(): return "Autobot busy"
     thread = threading.Thread(target=start_drive, args=["REVERSE"])
     thread.start()
+    toggle_green()
     return "Moved backward"
 
 @app.route("/left", methods=["GET"])
@@ -87,6 +89,7 @@ def turn_left():
     if thread.isAlive(): return "Autobot busy"
     thread = threading.Thread(target=start_drive, args=["LEFT"])
     thread.start()
+    toggle_green()
     return "Turned left"
 
 @app.route("/right", methods=["GET"])
@@ -96,6 +99,7 @@ def turn_right():
     if thread.isAlive(): return "Autobot busy"
     thread = threading.Thread(target=start_drive, args=["RIGHT"])
     thread.start()
+    toggle_green()
     return "Turned right"
 
 @app.route("/activate", methods=["GET"])
