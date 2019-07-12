@@ -1,6 +1,6 @@
 from time import sleep
 import threading
-import flask
+from flask import Flask, render_template, url_for
 import RPi.GPIO as GPIO
 import pusher_client
 import soundsensor
@@ -51,7 +51,7 @@ def toggle_red():
 
 # Globals
 thread = threading.Thread(target=start_drive)
-app = flask.Flask(__name__, template_folder="template")
+app = Flask(__name__, template_folder="template")
 app.config["DEBUG"] = True
 
 
@@ -60,7 +60,7 @@ app.config["DEBUG"] = True
 def home():
     """ Render docs page """
     #return "Autobot API<br/> <iframe src='http://172.20.10.8:8081'></iframe>"
-    return flask.render_template("index.html")
+    return render_template("index.html")
 
 @app.route("/forward", methods=["GET"])
 def forward():
