@@ -51,7 +51,7 @@ def toggle_red():
 
 # Globals
 thread = threading.Thread(target=start_drive)
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, template_folder="template")
 app.config["DEBUG"] = True
 
 
@@ -60,7 +60,7 @@ app.config["DEBUG"] = True
 def home():
     """ Render docs page """
     #return "Autobot API<br/> <iframe src='http://172.20.10.8:8081'></iframe>"
-    return flask.redirect("http://172.20.10.8:8081", code=302)
+    return flask.render_template("index.html")
 
 @app.route("/forward", methods=["GET"])
 def forward():

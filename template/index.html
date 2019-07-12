@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>AutoBot</title>
+    </head>
+    <body>
+        <div class="direction direction--forward">
+            <button onclick="move('/forward')">
+                Forward
+            </button>
+        </div>
+        <div class="direction direction--reverse">
+            <button onclick="move('/reverse')">
+                Reverse
+            </button>
+        </div>
+        <div class="direction direction--left">
+            <button onclick="move('/left')">
+                Left
+            </button>
+        </div>
+        <div class="direction direction--right">
+            <button onclick="move('/right')">
+                Right
+            </button>
+        </div>
+        <div class="direction direction--activate">
+            <button onclick="move('/activate')">
+                Activate
+            </button>
+        </div>
+
+        <script>
+            var xmlHttp = new XMLHttpRequest();
+
+            function move(direction) {
+                xmlHttp.open("GET", direction, false);
+                xmlHttp.send(null);
+                console.log(xmlHttp.responseText);
+            }
+
+        </script>
+    </body>
+</html>
