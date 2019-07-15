@@ -27,7 +27,7 @@ def start_drive(direction):
     }
     if direction in directions:
         directions[direction]()
-        sleep(0.25)
+        sleep(0.5)
     else:
         collision.start()
         collision.drive(30)
