@@ -12,6 +12,11 @@
     </head>
     <body onload="init_gn()">
         <div class="intro-container">
+
+            <video controls="controls" width="720" height="480" autoplay="autoplay">
+                <source src="{{ url_for('static', filename='stream.m3u8') }}" type="application/x-mpegURL" />
+            </video>
+
             <div class="gyro-sensor">
                 <h3>Sensor Data</h3>
                 <p id="change">Sensor Data</p>

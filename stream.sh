@@ -1,1 +1,16 @@
-raspivid -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - | gst-launch-1.0 -v fdsrc ! h264parse !  rtph264pay config-interval=1 pt=96 ! gdppay ! tcpserversink host=0.0.0.0 port=5000
+sudo raspivid -n -w 720 -h 405 -fps 25 -vf -t 86400000 -b 1800000 -ih -o - \
+             | ffmpeg -y \
+             -i - \
+             -c:v copy \
+             -map 0:0 \
+             -f ssegment \
+             -segment_time 4 \
+             -segment_format mpegts \
+             -segment_list "static/stream.m3u8" \
+             -segment_list_size 720 \
+             -segment_list_flags live \
+             -segment_list_type m3u8 \
+             "static/%08d.ts"
+
+
+trap "rm static/stream.m3u8 static/*.ts" EXIT
