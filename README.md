@@ -25,3 +25,9 @@ s.start()               # Start measurement
 
 #### Collision detection
 This relies on both `soundsensor.py` and `motor.py` to function. Super simple AI. It moves forward until an obstacle is detected, then turns left until an obstacle is no longer detected before continuing forward.
+
+#### Bluetooth gamepad
+The Autobot can be directly controlled with the `bt_contoller.py` script. Requires root.
+
+#### API
+The `api.py` file contains a simple Flask app to control the Autobot. The `stream.sh` file provides a live stream to the Flask app from the onboard camera.
