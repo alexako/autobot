@@ -60,7 +60,6 @@ app.config["DEBUG"] = True
 @app.route("/", methods=["GET"])
 def home():
     """ Render docs page """
-    #return "Autobot API<br/> <iframe src='http://172.20.10.8:8081'></iframe>"
     return render_template("index.html")
 
 @app.route("/payload", methods=["POST"])
@@ -73,6 +72,11 @@ def autodeploy():
 def stream():
     """ Render docs page """
     return render_template("stream.html")
+
+@app.route("/map", methods=["GET"])
+def stream():
+    """ Render docs page """
+    return render_template("map.html")
 
 @app.route("/update-gps", methods=["POST"])
 def update_gps():

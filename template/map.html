@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>AutoBot</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"/>
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.9.0/css/solid.css"
+            integrity="sha384-KyLwW4NRDhAz4RVatBCvFATniD3ze5rJvP1usxUFectdGgG8n+7OTcZug8s4bj5H"
+            crossorigin="anonymous"/>
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.9.0/css/fontawesome.css"
+            integrity="sha384-QSCxeayZXa6bvOhHReoQRGN7utvnOnY3JoBHGxM61JQQ1EXA7AT3m7dnlHXLhnCj"
+            crossorigin="anonymous"/>
+        <script src="{{ url_for('static', filename='gyronorm.complete.min.js') }}"></script>
+        <script src="https://js.pusher.com/4.4/pusher.min.js"></script>
+    </head>
+    <body onload="init_gn()">
+        <div id="map"></div>
+        <script>
+            var pusher = new Pusher('e9edd41d83c667edc487', {
+                cluster: 'ap1',
+                forceTLS: true
+            });
+    
+            var channel = pusher.subscribe('autobot');
+            channel.bind('update-gps', function (data) {
+                alert(JSON.stringify(data));
+                updateMap(JSON.parse(data));
+            });
+    
+            function initMap() {
+                var uluru = {lat: -25.344, lng: 131.036};
+                var map = new google.maps.Map(
+                    document.getElementById('map'), {
+                        zoom: 4,
+                        center: uluru
+                    });
+                var marker = new google.maps.Marker({
+                    position: uluru,
+                    map: map
+                });
+            }
+    
+            function updateMap(loc) {
+                console.log('updateMap:', loc);
+                var map = new google.maps.Map(
+                    document.getElementById('map'), {
+                        zoom: 4,
+                        center: loc
+                    });
+                var marker = new google.maps.Marker({
+                    position: loc,
+                    map: map
+                });
+            }
+        </script>
+        <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDySjRiesEXyJQD4F8_iivwIRRQfRVtLzM&callback=initMap">
+        </script>
+    </body>
+</html>
