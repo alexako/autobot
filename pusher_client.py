@@ -13,4 +13,4 @@ def trigger(event, message):
     pusher_client.trigger(
             'autobot',
             event,
-            {'message': message})
+            message)

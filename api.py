@@ -62,6 +62,30 @@ def home():
     #return "Autobot API<br/> <iframe src='http://172.20.10.8:8081'></iframe>"
     return render_template("index.html")
 
+@app.route("/payload", methods=["POST"])
+def autodeploy():
+    """ Autodeploy webhook """
+    print "Webhook event"
+    print request.form
+
+    return "Done"
+
+@app.route("/stream", methods=["GET"])
+def stream():
+    """ Render docs page """
+    #return "Autobot API<br/> <iframe src='http://172.20.10.8:8081'></iframe>"
+    return render_template("stream.html")
+
+@app.route("/update-gps", methods=["POST"])
+def update_gps():
+    """ Update clients with latest GPS coords """
+    print request.form
+    pusher_client.trigger("update-gps",
+        {
+            lat: request.form.get("latitude"),
+            lng: request.form.get("longitude")
+        })
+
 @app.route("/forward", methods=["GET"])
 def forward():
     """ Move bot forward """
