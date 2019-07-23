@@ -1,6 +1,7 @@
 from time import sleep
+import os
 import threading
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 import RPi.GPIO as GPIO
 import pusher_client
 import soundsensor
@@ -67,7 +68,7 @@ def autodeploy():
     """ Autodeploy webhook """
     print "Webhook event"
     print request.form
-
+    os.system("git pull")
     return "Done"
 
 @app.route("/stream", methods=["GET"])
