@@ -1,0 +1,130 @@
+<html>
+    <head>
+        <title>AutoBot</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"/>
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.9.0/css/solid.css"
+            integrity="sha384-KyLwW4NRDhAz4RVatBCvFATniD3ze5rJvP1usxUFectdGgG8n+7OTcZug8s4bj5H"
+            crossorigin="anonymous"/>
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.9.0/css/fontawesome.css"
+            integrity="sha384-QSCxeayZXa6bvOhHReoQRGN7utvnOnY3JoBHGxM61JQQ1EXA7AT3m7dnlHXLhnCj"
+            crossorigin="anonymous"/>
+        <script src="{{ url_for('static', filename='gyronorm.complete.min.js') }}"></script>
+    </head>
+    <body onload="init_gn()">
+        <div class="intro-container">
+
+            <video controls="controls" width="720" height="480" autoplay="autoplay">
+                <source src="{{ url_for('static', filename='stream.m3u8') }}" type="application/x-mpegURL" />
+            </video>
+
+            <div class="gyro-sensor">
+                <h3>Sensor Data</h3>
+                <p id="change">Sensor Data</p>
+                <p id="gyro-x"></p>
+                <p id="gyro-y"></p>
+                <p id="gyro-z"></p>
+            </div>
+            <div class="forward-container">
+                <div class="direction direction--forward"
+                    onclick="move('/forward')">
+                    <i class="fas fa-arrow-alt-up"></i>
+                </div>
+            </div>
+            <div class="left-right-container">
+                <div class="direction direction--left"
+                    onclick="move('/left')">
+                    <i class="fas fa-arrow-alt-left"></i>
+                </div>
+                <div class="direction direction--right"
+                    onclick="move('/right')">
+                    <i class="fas fa-arrow-alt-right"></i>
+                </div>
+            </div>
+            <div class="reverse-container">
+                <div class="direction direction--reverse"
+                    onclick="move('/reverse')">
+                    <i class="fas fa-arrow-alt-down"></i>
+                </div>
+            </div>
+
+            <div class="direction direction--activate"
+                onclick="move('/activate')">
+                Activate AutoDrive
+            </div>
+        </div>
+
+        <script type="text/javascript">
+
+        var gn;
+
+        function init_gn() {
+            var args = {
+                logger: logger
+            };
+
+            gn = new GyroNorm();
+
+            gn.init(args).then(function() {
+                var isAvailable = gn.isAvailable();
+                if(!isAvailable.deviceOrientationAvailable) {
+                    logger({message:'Device orientation is not available.'});
+                }
+
+                if(!isAvailable.accelerationAvailable) {
+                    logger({message:'Device acceleration is not available.'});
+                }
+
+                if(!isAvailable.accelerationIncludingGravityAvailable) {
+                    logger({message:'Device acceleration incl. gravity is not available.'});
+                } 
+
+                if(!isAvailable.rotationRateAvailable) {
+                    logger({message:'Device rotation rate is not available.'});
+                }
+
+                start_gn();
+            }).catch(function(e){
+                logger({message:e});
+            });
+        }
+
+        function logger(data) {
+            var test = document.getElementById('change');
+            test.innerText = "Error: " + data.message;
+        }
+
+        function stop_gn() {
+            gn.stop();
+        }
+
+        function start_gn() {
+            gn.start(gnCallBack);
+        }
+
+        function gnCallBack(data) {
+            var gyroX = document.getElementById('gyro-x');
+            var gyroY = document.getElementById('gyro-y');
+            var gyroZ = document.getElementById('gyro-z');
+
+            gyroX.innerText = "x: " + data.dm.gx;
+            gyroY.innerText = "y: " + data.dm.gy;
+            gyroZ.innerText = "z: " + data.dm.gz;
+
+            var threshold = 3;
+
+//            if (data.dm.y >= threshold) move('/forward');
+//            else if (data.dm.y <= -threshold) move('/reverse');
+//            else if (data.dm.x >= threshold) move('/right');
+//            else if (data.dm.x <= -threshold) move('/left');
+        }
+
+        var xmlHttp = new XMLHttpRequest();
+
+        function move(direction) {
+            xmlHttp.open("GET", direction, false);
+            xmlHttp.send(null);
+            console.log(xmlHttp.responseText);
+        }
+        </script>
+    </body>
+</html>
