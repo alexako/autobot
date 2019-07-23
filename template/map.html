@@ -10,8 +10,14 @@
             crossorigin="anonymous"/>
         <script src="{{ url_for('static', filename='gyronorm.complete.min.js') }}"></script>
         <script src="https://js.pusher.com/4.4/pusher.min.js"></script>
+        <style>
+            #map {
+                height: 400px;
+                width: 100%;
+            }
+        </style>
     </head>
-    <body onload="init_gn()">
+    <body>
         <div id="map"></div>
         <script>
             var pusher = new Pusher('e9edd41d83c667edc487', {
@@ -29,7 +35,7 @@
                 var uluru = {lat: -25.344, lng: 131.036};
                 var map = new google.maps.Map(
                     document.getElementById('map'), {
-                        zoom: 4,
+                        zoom: 12,
                         center: uluru
                     });
                 var marker = new google.maps.Marker({
@@ -42,7 +48,7 @@
                 console.log('updateMap:', loc);
                 var map = new google.maps.Map(
                     document.getElementById('map'), {
-                        zoom: 4,
+                        zoom: 12,
                         center: loc
                     });
                 var marker = new google.maps.Marker({
