@@ -74,7 +74,7 @@ def stream():
     return render_template("stream.html")
 
 @app.route("/map", methods=["GET"])
-def stream():
+def map_view():
     """ Render docs page """
     return render_template("map.html")
 
