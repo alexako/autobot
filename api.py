@@ -82,12 +82,12 @@ def map_view():
 def update_gps():
     """ Update clients with latest GPS coords """
     print request.form
-    pusher_client.trigger("update-gps",
-        {
-            "lat": request.form.get("latitude"),
-            "lng": request.form.get("longitude")
-        })
-    return "Updated"
+    payload = {
+        "lat": request.form.get("latitude"),
+        "lng": request.form.get("longitude")
+    }
+    pusher_client.trigger("update-gps", payload)
+    return payload
 
 @app.route("/forward", methods=["GET"])
 def forward():
