@@ -79,6 +79,17 @@ def map_view():
     """ Render docs page """
     return render_template("map.html")
 
+@app.route("/update-location", methods=["POST"])
+def update_location():
+    """ Update clients with latest GPS coords (FORM) """
+    print request.form
+    payload = {
+        "lat": request.form.get("latitude"),
+        "lng": request.form.get("longitude")
+    }
+    pusher_client.trigger("update-gps", payload)
+    return json.dumps(payload)
+
 @app.route("/update-gps", methods=["POST"])
 def update_gps():
     """ Update clients with latest GPS coords """
