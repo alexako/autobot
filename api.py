@@ -84,9 +84,10 @@ def update_gps():
     print request.form
     pusher_client.trigger("update-gps",
         {
-            lat: request.form.get("latitude"),
-            lng: request.form.get("longitude")
+            "lat": request.form.get("latitude"),
+            "lng": request.form.get("longitude")
         })
+    return "Updated"
 
 @app.route("/forward", methods=["GET"])
 def forward():
