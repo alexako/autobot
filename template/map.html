@@ -20,41 +20,36 @@
     <body>
         <div id="map"></div>
         <script>
+            var map;
+            var marker;
             var pusher = new Pusher('e9edd41d83c667edc487', {
                 cluster: 'ap1',
                 forceTLS: true
             });
     
             var channel = pusher.subscribe('autobot');
-            channel.bind('update-gps', function (data) {
-                alert(JSON.stringify(data));
-                updateMap(JSON.parse(data));
-            });
+            channel.bind('update-gps', updateMap);
     
             function initMap() {
                 var uluru = {lat: -25.344, lng: 131.036};
-                var map = new google.maps.Map(
+                map = new google.maps.Map(
                     document.getElementById('map'), {
                         zoom: 12,
                         center: uluru
                     });
-                var marker = new google.maps.Marker({
+                marker = new google.maps.Marker({
                     position: uluru,
                     map: map
                 });
             }
     
-            function updateMap(loc) {
-                console.log('updateMap:', loc);
-                var map = new google.maps.Map(
-                    document.getElementById('map'), {
-                        zoom: 12,
-                        center: loc
-                    });
-                var marker = new google.maps.Marker({
-                    position: loc,
-                    map: map
-                });
+            function updateMap(payload) {
+                alert(JSON.stringify(payload));
+                console.log('updateMap:', payload);
+                let lat = payload.lat;
+                let lng = payload.lng;
+                map.setCenter({lat: lat, lng: lng, alt: 0});
+                marker.setPosition({lat: lat, lng: lng, alt: 0});
             }
         </script>
         <script async defer
