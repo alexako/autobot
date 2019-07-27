@@ -1,5 +1,6 @@
 from time import sleep
 import os
+import json
 import threading
 from flask import Flask, render_template, url_for, request
 import RPi.GPIO as GPIO
@@ -78,15 +79,28 @@ def map_view():
     """ Render docs page """
     return render_template("map.html")
 
+@app.route("/update-location", methods=["POST"])
+def update_location():
+    """ Update clients with latest GPS coords (FORM) """
+    print request.form
+    payload = {
+        "lat": request.form.get("latitude"),
+        "lng": request.form.get("longitude")
+    }
+    pusher_client.trigger("update-gps", payload)
+    return json.dumps(payload)
+
 @app.route("/update-gps", methods=["POST"])
 def update_gps():
     """ Update clients with latest GPS coords """
-    print request.form
-    pusher_client.trigger("update-gps",
-        {
-            lat: request.form.get("latitude"),
-            lng: request.form.get("longitude")
-        })
+    data = request.get_json()
+    print data
+    payload = {
+        "lat": data["latitude"],
+        "lng": data["longitude"]
+    }
+    pusher_client.trigger("update-gps", payload)
+    return json.dumps(payload)
 
 @app.route("/forward", methods=["GET"])
 def forward():

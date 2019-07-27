@@ -31,23 +31,22 @@
             channel.bind('update-gps', updateMap);
     
             function initMap() {
-                var uluru = {lat: -25.344, lng: 131.036};
+                var makati = {lat: 14.5579, lng: 121.0085};
                 map = new google.maps.Map(
                     document.getElementById('map'), {
-                        zoom: 12,
-                        center: uluru
+                        zoom: 16,
+                        center: makati
                     });
                 marker = new google.maps.Marker({
-                    position: uluru,
+                    position: makati,
                     map: map
                 });
             }
     
             function updateMap(payload) {
-                alert(JSON.stringify(payload));
                 console.log('updateMap:', payload);
-                let lat = payload.lat;
-                let lng = payload.lng;
+                let lat = parseFloat(payload.lat);
+                let lng = parseFloat(payload.lng);
                 map.setCenter({lat: lat, lng: lng, alt: 0});
                 marker.setPosition({lat: lat, lng: lng, alt: 0});
             }
