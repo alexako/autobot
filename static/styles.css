@@ -37,8 +37,7 @@
 
 .video-container {
     background-color: #2a2a2a;
-    display: flex;
-    align-items: center;
+    margin-top: 15vh;
 }
 
 video {
