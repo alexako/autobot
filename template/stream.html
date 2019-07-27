@@ -4,7 +4,7 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"/>
     </head>
     <body>
-        <div class="video_container">
+        <div class="video-container">
             <video controls="controls" autoplay="autoplay">
                 <source src="{{ url_for('static', filename='stream.m3u8') }}" type="application/x-mpegURL" />
             </video>
