@@ -10,6 +10,7 @@
             crossorigin="anonymous"/>
         <script src="{{ url_for('static', filename='gyronorm.complete.min.js') }}"></script>
         <script src="https://js.pusher.com/4.4/pusher.min.js"></script>
+        <script src="{{ url_for('static', filename='map.js') }}"></script>
         <style>
             #map {
                 height: 100%;
@@ -19,38 +20,6 @@
     </head>
     <body>
         <div id="map"></div>
-        <script>
-            var map;
-            var marker;
-            var pusher = new Pusher('e9edd41d83c667edc487', {
-                cluster: 'ap1',
-                forceTLS: true
-            });
-    
-            var channel = pusher.subscribe('autobot');
-            channel.bind('update-gps', updateMap);
-    
-            function initMap() {
-                var makati = {lat: 14.5579, lng: 121.0085};
-                map = new google.maps.Map(
-                    document.getElementById('map'), {
-                        zoom: 16,
-                        center: makati
-                    });
-                marker = new google.maps.Marker({
-                    position: makati,
-                    map: map
-                });
-            }
-    
-            function updateMap(payload) {
-                console.log('updateMap:', payload);
-                let lat = parseFloat(payload.lat);
-                let lng = parseFloat(payload.lng);
-                map.setCenter({lat: lat, lng: lng, alt: 0});
-                marker.setPosition({lat: lat, lng: lng, alt: 0});
-            }
-        </script>
         <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDySjRiesEXyJQD4F8_iivwIRRQfRVtLzM&callback=initMap">
         </script>
