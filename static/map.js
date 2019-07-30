@@ -18,6 +18,22 @@ var pusher = new Pusher('e9edd41d83c667edc487', {
 var channel = pusher.subscribe('autobot');
 channel.bind('update-gps', updateMap);
 
+function toggleEventFilter(event) {
+    const trackPhoneBtn = document.getElementById('track-phone');
+    const trackAutobotBtn = document.getElementById('track-autobot');
+
+    if (event === 'update-gps') {
+        trackAutobotBtn.classList.remove('active')
+        trackPhoneBtn.classList.add('active');
+    } else {
+        trackPhoneBtn.classList.remove('active')
+        trackAutobotBtn.classList.add('active');
+    }
+
+    channel.unbind();
+    channel.bind(event, updateMap);
+}
+
 function initMap() {
     map = new google.maps.Map(
         document.getElementById('map'), {
