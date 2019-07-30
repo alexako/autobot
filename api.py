@@ -1,6 +1,7 @@
 from time import sleep
 import os
 import json
+import urllib2
 import threading
 from flask import Flask, render_template, url_for, request
 import RPi.GPIO as GPIO
@@ -40,9 +41,12 @@ def start_drive(direction):
     pusher_client.trigger("drive-complete", "Autobot available")
 
 def get_location():
-    resp = urllib2.urlopen("http://ip-api.com/json/")
-    print resp
-    sleep(2)
+    resp = urllib2.urlopen("http://ip-api.com/json/").read()
+    obj = json.loads(resp)
+    return {
+        "lat": obj["lat"],
+        "lng": obj["lon"]
+    }
 
 def toggle_green():
     """ Toggle green LED """
@@ -58,7 +62,6 @@ def toggle_red():
 
 # Globals
 thread = threading.Thread(target=start_drive)
-location_thread = threading.Thread(target=get_location)
 app = Flask(__name__, template_folder="template")
 app.config["DEBUG"] = True
 
@@ -89,10 +92,10 @@ def map_view():
 def update_location():
     """ Update clients with latest GPS coords (FORM) """
     print request.form
-    location_thread.start()
+    loc = get_location()
     payload = {
-        "lat": request.form.get("latitude"),
-        "lng": request.form.get("longitude")
+        "lat": loc["lat"],
+        "lng": loc["lng"]
     }
     pusher_client.trigger("update-gps", payload)
     return json.dumps(payload)
