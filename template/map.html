@@ -19,6 +19,18 @@
         </style>
     </head>
     <body>
+        <div id="track-buttons">
+            <div id="track-phone"
+                class="track-button active"
+                onclick="toggleEventFilter('update-gps')">
+                Phone
+            </div>
+            <div id="track-autobot"
+                class="track-button"j
+                onclick="toggleEventFilter('update-location')">
+                AutoBot
+            </div>
+        </div>
         <div id="map"></div>
         <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDySjRiesEXyJQD4F8_iivwIRRQfRVtLzM&callback=initMap">
