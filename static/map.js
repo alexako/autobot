@@ -17,6 +17,7 @@ var pusher = new Pusher('e9edd41d83c667edc487', {
 });
 var channel = pusher.subscribe('autobot');
 channel.bind('update-gps', updateMap);
+channel.bind('update-location', updateMap);
 
 function initMap() {
     map = new google.maps.Map(

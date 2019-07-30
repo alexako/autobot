@@ -47,6 +47,9 @@ def get_location():
         "lat": obj["lat"],
         "lng": obj["lon"]
     }
+    print json.dumps(obj)
+    pusher_client.trigger("update-gps", payload)
+    sleep(3)
 
 def toggle_green():
     """ Toggle green LED """
@@ -62,6 +65,7 @@ def toggle_red():
 
 # Globals
 thread = threading.Thread(target=start_drive)
+location_thread = threading.Thread(target=get_location)
 app = Flask(__name__, template_folder="template")
 app.config["DEBUG"] = True
 
@@ -97,7 +101,7 @@ def update_location():
         "lat": loc["lat"],
         "lng": loc["lng"]
     }
-    pusher_client.trigger("update-gps", payload)
+    pusher_client.trigger("update-location", payload)
     return json.dumps(payload)
 
 @app.route("/update-gps", methods=["POST"])
