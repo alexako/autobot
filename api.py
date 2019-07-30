@@ -39,6 +39,11 @@ def start_drive(direction):
     motor.neutral()
     pusher_client.trigger("drive-complete", "Autobot available")
 
+def get_location():
+    resp = urllib2.urlopen("http://ip-api.com/json/")
+    print resp
+    sleep(2)
+
 def toggle_green():
     """ Toggle green LED """
     GPIO.output(LED_G, True)
@@ -53,6 +58,7 @@ def toggle_red():
 
 # Globals
 thread = threading.Thread(target=start_drive)
+location_thread = threading.Thread(target=get_location)
 app = Flask(__name__, template_folder="template")
 app.config["DEBUG"] = True
 
@@ -83,6 +89,7 @@ def map_view():
 def update_location():
     """ Update clients with latest GPS coords (FORM) """
     print request.form
+    location_thread.start()
     payload = {
         "lat": request.form.get("latitude"),
         "lng": request.form.get("longitude")
