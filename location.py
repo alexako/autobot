@@ -13,7 +13,7 @@ def get_location():
             "lng": obj["lon"]
         }
         print payload
-        pusher_client.trigger("update-gps", payload)
+        pusher_client.trigger("update-location", payload)
     except:
         print "Error"
 
