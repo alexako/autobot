@@ -201,5 +201,6 @@ if __name__ == '__main__':
         toggle_green()
         pusher_client.trigger("api-status", "Online")
     except KeyboardInterrupt:
+        pusher_client.trigger("api-status", "Offline")
         motor.neutral()
         GPIO.cleanup()
