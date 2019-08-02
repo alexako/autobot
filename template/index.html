@@ -8,14 +8,13 @@
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.9.0/css/fontawesome.css"
             integrity="sha384-QSCxeayZXa6bvOhHReoQRGN7utvnOnY3JoBHGxM61JQQ1EXA7AT3m7dnlHXLhnCj"
             crossorigin="anonymous"/>
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
         <script src="{{ url_for('static', filename='gyronorm.complete.min.js') }}"></script>
     </head>
     <body onload="init_gn()">
         <div class="intro-container">
 
-            <video controls="controls" width="720" height="480" autoplay="autoplay">
-                <source src="{{ url_for('static', filename='stream.m3u8') }}" type="application/x-mpegURL" />
-            </video>
+            <video id="video"></video>
 
             <div class="gyro-sensor">
                 <h3>Sensor Data</h3>
@@ -52,6 +51,18 @@
                 Activate AutoDrive
             </div>
         </div>
+
+        <script>
+            if (Hls.isSupported()) {
+                var video = document.getElementById('video');
+                var hls = new Hls();
+                hls.loadSource('{{ url_for("static", filename="stream.m3u8") }}');
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED,function() {
+                    video.play();
+                });
+            }
+        </script>
 
         <script type="text/javascript">
 
